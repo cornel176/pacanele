@@ -1,0 +1,11 @@
+<h2>Editează Joc</h2>
+<form method="POST">
+    Nume: <input name="name" value="{{ game.name }}"><br> Descriere: <textarea name="description">{{ game.description }}</textarea><br> Tip:
+    <select name="type">
+    {% for opt in ['slots','poker','blackjack','roulette','sports','other'] %}
+      <option value="{{ opt }}" {% if game.type == opt %}selected{% endif %}>{{ opt }}</option>
+    {% endfor %}
+  </select><br> Furnizor: <input name="provider" value="{{ game.provider }}"><br> Thumbnail: <input name="thumbnail" value="{{ game.thumbnail }}"><br> Min Bet: <input type="number" step="0.01" name="min_bet" value="{{ game.min_bet }}"><br> Max Bet:
+    <input type="number" step="0.01" name="max_bet" value="{{ game.max_bet }}"><br>
+    <button type="submit">Salvează</button>
+</form>
