@@ -1,0 +1,9 @@
+<h2>Editează Utilizator</h2>
+<form method="POST">
+    Prenume: <input name="first_name" value="{{ user.first_name }}"><br> Nume: <input name="last_name" value="{{ user.last_name }}"><br> Telefon: <input name="phone" value="{{ user.phone }}"><br> Rol:
+    <select name="role">
+    <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+  </select><br> Verificat: <input type="checkbox" name="is_verified" {% if user.is_verified %}checked{% endif %}><br> Blocat: <input type="checkbox" name="is_blocked" {% if user.is_blocked %}checked{% endif %}><br>
+    <button type="submit">Salvează</button>
+</form>
