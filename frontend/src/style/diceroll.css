@@ -1,0 +1,173 @@
+body {
+  margin: 0;
+
+  background-color: #000;
+  display: flex;
+  justify-content: center; /* center horizontally */
+  align-items: flex-start; /* align items at top */
+  padding-top: 25vh;       /* push content down 25% from top */
+  font-family: Arial, sans-serif;
+  color: white;
+  position: relative;
+}
+
+.gameWrapper {
+  border: 5px solid #00ff00;
+  border-radius: 15px;
+  padding: 20px;
+  background-color: #111;
+  width: 350px;
+  text-align: center;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.homeBtn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #4caf50;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background 0.3s ease;
+  text-decoration: none;
+}
+
+.homeBtn:hover {
+  background: #388e3c;
+}
+
+.diceWrap {
+  perspective: 1000px;
+  margin: 2rem auto;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dice {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotate3d(1, 1, 0, 0deg);
+  transition: transform 1s ease-out;
+  margin: 0 auto;
+  border-radius: 10px;
+  border: none;
+}
+
+.diceFace {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: white;
+  border: 2px solid #222;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  transform-style: preserve-3d;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.diceFace .dot {
+  width: 15px;
+  height: 15px;
+  background: black;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+}
+
+.front {
+  transform: rotateY(0deg) translateZ(50px);
+}
+.back {
+  transform: rotateY(180deg) translateZ(50px);
+}
+.left {
+  transform: rotateY(-90deg) translateZ(50px);
+}
+.right {
+  transform: rotateY(90deg) translateZ(50px);
+}
+.up {
+  transform: rotateX(90deg) translateZ(50px);
+}
+.bottom {
+  transform: rotateX(-90deg) translateZ(50px);
+}
+
+@keyframes fastSpin {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: rotateX(360deg) rotateY(180deg);
+  }
+  50% {
+    transform: rotateX(720deg) rotateY(360deg);
+  }
+  75% {
+    transform: rotateX(1080deg) rotateY(540deg);
+  }
+  100% {
+    transform: rotateX(1440deg) rotateY(720deg);
+  }
+}
+
+.dice.rolling {
+  animation: fastSpin 2s linear forwards;
+}
+
+.controller button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #222;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.controller button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dice-result {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+}
+
+.betContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.betContainer label {
+  font-size: 14px;
+}
+
+.betContainer input {
+  margin-left: 5px;
+  padding: 5px;
+  border-radius: 6px;
+  border: none;
+  width: 100px;
+}
+
+.resultMsg {
+  margin-top: 15px;
+  font-weight: bold;
+}

@@ -1,0 +1,92 @@
+.login-container {
+  position: relative; /* pentru poziționarea absolută a butonului */
+  height: 100vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+}
+
+/* Buton Home fix în colțul extrem stânga sus */
+.home-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  color: #d2cc0e;
+  border: 2px solid #d2cc0e;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 0; /* rotunjire doar jos dreapta */
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  z-index: 10;
+  margin: 0;
+}
+
+.home-button:hover {
+  background-color: #d2cc0e;
+  color: black;
+}
+
+/* Formularul de login */
+.login-form {
+  background-color: #111;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 360px;
+}
+
+.login-form h2 {
+  margin-bottom: 1.5rem;
+  color: #d2cc0e;
+  font-size: 1.8rem;
+}
+
+/* Inputuri */
+.login-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  background-color: #222;
+  color: #fff;
+  font-size: 1rem;
+  transition: border 0.3s ease;
+}
+
+.login-form input:focus {
+  outline: none;
+  border: 2px solid #d2cc0e;
+}
+
+.login-form input::placeholder {
+  color: #888;
+}
+
+/* Butonul de login */
+.login-form button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  background-color: #d2cc0e;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #b9b300;
+}
