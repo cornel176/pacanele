@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../style/SlotMachine.css";
+import "../styles/SlotMachine.css";
 
 import cherry from "../assets/images/slot-symbols/cherry.png";
 import lemon from "../assets/images/slot-symbols/lemon.png";
@@ -124,7 +124,6 @@ const SlotMachine = ({ balance, setBalance }) => {
 
   return (
     <div className="slot-container" style={{ position: "relative" }}>
-      {/* Home Button - Fixed in top-left */}
       <button
         onClick={() => navigate("/")}
         aria-label="Go to homepage"
@@ -185,33 +184,4 @@ const SlotMachine = ({ balance, setBalance }) => {
   );
 };
 
-export default SlotMachine;
-// În SlotMachine.jsx
-const spinSlot = async (betAmount) => {
-  try {
-    const response = await fetch('http://localhost:5000/api/slot/spin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: currentUser.id,
-        bet_amount: betAmount
-      }),
-    });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Animați roata cu simbolurile din data.reels
-      // Actualizați balanța cu data.new_balance
-      // Afișați mesaj de câștig/pierdere
-      return data;
-    } else {
-      throw new Error(data.message || 'Spin failed');
-    }
-  } catch (error) {
-    console.error('Error spinning:', error);
-    return { success: false, message: error.message };
-  }
-};
+export default SlotMachine; 

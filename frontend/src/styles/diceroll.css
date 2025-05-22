@@ -1,11 +1,10 @@
 body {
   margin: 0;
-
   background-color: #000;
   display: flex;
-  justify-content: center; /* center horizontally */
-  align-items: flex-start; /* align items at top */
-  padding-top: 25vh;       /* push content down 25% from top */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 25vh;
   font-family: Arial, sans-serif;
   color: white;
   position: relative;
@@ -170,4 +169,4 @@ body {
 .resultMsg {
   margin-top: 15px;
   font-weight: bold;
-}
+} 

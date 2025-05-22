@@ -7,39 +7,35 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1rem;
     background-color: transparent;
     color: #fff;
     font-family: 'Arial', sans-serif;
     gap: 2rem;
-    /* Stil modificat */
     max-width: 900px;
-    /* Ocupă tot viewport-ul */
     margin: 0 auto;
-    /* Doar centrare orizontală */
     border-radius: 20px;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
     box-sizing: border-box;
     position: relative;
-    top: -70px;
+    top: -150px;
 }
 
 .slot-machine-frame {
     border-radius: 20px;
-    padding: 2rem;
+    padding: 1.5rem;
     background: #000;
     box-shadow: 0 0 30px #ffcc00;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Noul stil */
     width: 100%;
     box-sizing: border-box;
 }
 
 .slot-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
     text-shadow: 0 0 10px #ffcc00;
     text-align: center;
 }
@@ -47,7 +43,7 @@ body {
 .slot-grid {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .slot-column {
@@ -56,7 +52,6 @@ body {
     gap: 1rem;
     overflow: hidden;
     height: 320px;
-    /* 3 simboluri x 100px + 2 gaps */
 }
 
 .slot-symbol {
@@ -170,7 +165,6 @@ body {
     }
     .slot-column {
         height: 220px;
-        /* ajustat pentru dimensiune mai mica */
     }
 }
 
@@ -192,4 +186,4 @@ body {
 
 .slot-home-btn:hover {
     background: #388e3c;
-}
+} 

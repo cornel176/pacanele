@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "../style/diceroll.css";
+import "../styles/diceroll.css";
 
 const DiceRoll = ({ balance, setBalance }) => {
   const [isRolling, setIsRolling] = useState(false);
@@ -142,4 +142,4 @@ const DiceRoll = ({ balance, setBalance }) => {
   );
 };
 
-export default DiceRoll;
+export default DiceRoll; 

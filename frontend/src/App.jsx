@@ -1,77 +1,51 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Auth from './pages/Auth';
+import Home from './pages/Home';
+import CoinFlip from './pages/CoinFlip';
+import DiceRoll from './pages/DiceRoll';
+import SlotMachine from './pages/SlotMachine';
+import { useState } from 'react';
 
-import Home from "./pages/Home";
-import Slot from "./pages/SlotMachine";
-import Dice from "./pages/DiceRoll";
-import CoinFlip from "./pages/CoinFlip";
-import Login from "./pages/Login";
+// Protected Route component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
 
-export default function App() {
+function App() {
   const [balance, setBalance] = useState(1000);
 
   return (
     <AuthProvider>
-      <Router>
-        <div
-          style={{
-            minHeight: "100vh",
-            color: "inherit",
-            fontFamily: "inherit",
-            padding: 0,
-            margin: 0,
-            position: "relative",
-          }}
-        >
-          {/* Balanță vizibilă global */}
-          <div
-            style={{
-              position: "fixed",
-              top: 30,
-              right: 20,
-              backgroundColor: "gold",
-              padding: "8px 16px",
-              borderRadius: "10px",
-              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-              fontWeight: "bold",
-              zIndex: 1000,
-              color: "black",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            💰 Bani: {balance} MDL
-            <button
-              onClick={() => setBalance((prev) => prev + 100)}
-              style={{
-                backgroundColor: "black",
-                color: "white",
-                border: "none",
-                borderRadius: "50%",
-                width: "30px",
-                height: "30px",
-                fontWeight: "bold",
-                cursor: "pointer",
-                lineHeight: "1",
-              }}
-              title="Adaugă 100 MDL"
-            >
-              ＋
-            </button>
-          </div>
-
-          <Routes>
-            {/* Toate rutele sunt publice */}
-            <Route path="/" element={<Home />} />
-            <Route path="/slot" element={<Slot balance={balance} setBalance={setBalance} />} />
-            <Route path="/dice" element={<Dice balance={balance} setBalance={setBalance} />} />
-            <Route path="/coin" element={<CoinFlip balance={balance} setBalance={setBalance} />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </div>
-      </Router>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Auth />} />
+          <Route path="/register" element={<Auth />} />
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Home balance={balance} setBalance={setBalance} />
+            </ProtectedRoute>
+          } />
+          <Route path="/slot" element={
+            <ProtectedRoute>
+              <SlotMachine balance={balance} setBalance={setBalance} />
+            </ProtectedRoute>
+          } />
+          <Route path="/dice" element={
+            <ProtectedRoute>
+              <DiceRoll balance={balance} setBalance={setBalance} />
+            </ProtectedRoute>
+          } />
+          <Route path="/coin" element={
+            <ProtectedRoute>
+              <CoinFlip balance={balance} setBalance={setBalance} />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
+
+export default App;

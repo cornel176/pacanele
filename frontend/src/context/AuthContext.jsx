@@ -1,46 +1,92 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { apiRequest } from '../api';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
-export const AuthContext = createContext();
+const AuthContext = createContext(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      verifyToken(token);
-    } else {
-      setLoading(false);
-    }
+    checkAuth();
   }, []);
 
-  const verifyToken = async (token) => {
+  const checkAuth = async () => {
     try {
-      const userData = await apiRequest('/api/verify-token', 'GET', null, token);
-      setUser(userData);
+      const response = await axios.get('http://localhost:5000/api/me', {
+        withCredentials: true
+      });
+      setUser(response.data.user);
+      setIsAuthenticated(true);
     } catch (error) {
-      localStorage.removeItem('token');
+      setUser(null);
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (credentials) => {
-    const data = await apiRequest('/api/login', 'POST', credentials);
-    localStorage.setItem('token', data.access_token);
-    setUser(data);
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/login',
+        { email, password },
+        { withCredentials: true }
+      );
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: 'A apărut o eroare la autentificare' };
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const register = async (username, email, password) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/register',
+        { username, email, password },
+        { withCredentials: true }
+      );
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: 'A apărut o eroare la înregistrare' };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const value = {
+    user,
+    isAuthenticated,
+    loading,
+    login,
+    register,
+    logout
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
-};
+}; 

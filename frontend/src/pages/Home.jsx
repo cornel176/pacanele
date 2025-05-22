@@ -1,14 +1,20 @@
-import React,{ useState } from "react";
-import { Link } from "react-router-dom";
-import "../style/home.css";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
+import "../styles/Home.css";
 import Logo from "../assets/images/logo.png";
 import SlotImg from "../assets/images/slot-machine.png";
 import DiceImg from "../assets/images/dice-roll.png";
 import CoinImg from "../assets/images/coin-flip.png";
 
+export default function Home({ balance, setBalance }) {
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
-export default function Home() {
-  const [money, setMoney] = useState(1000);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   const games = [
     { name: "Slot Machine", path: "/slot", image: SlotImg },
@@ -18,9 +24,13 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      {/* Buton Login */}
+      {/* Buton Login/Logout */}
       <div className="login-button">
-        <Link to="/login">Login</Link>
+        {isAuthenticated ? (
+          <a href="#" onClick={handleLogout}>Logout</a>
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
       </div>
 
       {/* Logo */}
@@ -28,20 +38,33 @@ export default function Home() {
         <img src={Logo} alt="Casino Logo" className="logo" />
       </div>
 
+      {/* User Info */}
+      {isAuthenticated && user && (
+        <div style={{ 
+          background: '#111', 
+          padding: '1rem 2rem', 
+          borderRadius: '12px',
+          marginBottom: '2rem'
+        }}>
+          <p style={{ margin: '0.5rem 0' }}>Welcome, {user.email}</p>
+          <p style={{ margin: '0.5rem 0' }}>Balance: ${balance}</p>
+        </div>
+      )}
+
       {/* Jocuri */}
       <div className="games-row">
         {games.map((game) => (
-          <Link
-            to={game.path}
+          <div
             key={game.name}
             className="game-box"
-            aria-label={`Joacă ${game.name}`}
+            onClick={() => navigate(game.path)}
+            style={{ cursor: "pointer" }}
           >
             <img src={game.image} alt={game.name} />
             <h3>{game.name}</h3>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
   );
-}
+} 

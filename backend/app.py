@@ -1,57 +1,48 @@
-from flask import Flask, send_from_directory
-from flask_session import Session
-from flask_cors import CORS
-from config import Config
-from routes.auth import auth_bp
-from datetime import timedelta
-from database import db, init_db
+from flask import Flask, session
+from database import get_connection, test_connection
 import os
+from datetime import timedelta
+from routes.auth import auth_bp
+from flask_cors import CORS
 
-app = Flask(
-    __name__,
-    template_folder="../frontend/templates",
-    static_folder="../frontend/static"
-)
+app = Flask(__name__)
 
-# Configurare aplicație
-app.config.from_object(Config)
+# CORS configuration
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:5173", "http://127.0.0.1:5173"],  # Frontend URLs
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True,  # Important for cookies/sessions
+        "expose_headers": ["Content-Type", "Authorization"],
+        "max_age": 3600
+    }
+})
 
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = './flask_session'
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
-app.config['SESSION_COOKIE_SECURE'] = False  # False dacă nu e HTTPS
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Lax ca să funcționeze cu CORS
-app.config['UPLOAD_FOLDER'] = './uploads'  # Exemplu, dacă folosești upload
+# Session configuration
+app.secret_key = os.urandom(24)  # Generates a random secret key
+app.permanent_session_lifetime = timedelta(days=7)  # Sessions will last for 7 days
 
-# Creează folderele dacă nu există
-if not os.path.exists(app.config['SESSION_FILE_DIR']):
-    os.makedirs(app.config['SESSION_FILE_DIR'])
-
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
-
-# Inițializează DB și sesiunea
-init_db(app)
-Session(app)
-
-# Configurează CORS o singură dată corect
-# Replace your current CORS configuration with this:
-CORS(app, 
-     resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}},
-     supports_credentials=True)
-
-# Înregistrează blueprint-uri
+# Register blueprints
 app.register_blueprint(auth_bp)
 
-# Serve uploaded files (dacă e cazul)
-@app.route('/uploads/<filename>')
-def serve_uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+# Test database connection on startup
+if not test_connection():
+    raise Exception("Nu s-a putut conecta la baza de date!")
 
-# Debug info
-print(f"Session directory: {app.config['SESSION_FILE_DIR']}")
-print(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
+@app.route('/')
+def home():
+    return "Serverul rulează!"
+
+# Example of how to use sessions
+@app.route('/set-session/<value>')
+def set_session(value):
+    session['test_value'] = value
+    return f"Session value set to: {value}"
+
+@app.route('/get-session')
+def get_session():
+    return f"Current session value: {session.get('test_value', 'Not set')}"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000) 

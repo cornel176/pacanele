@@ -1,6 +1,5 @@
 /* Reset global */
 html, #root {
-  
   background-color: #000;
   color: white;
   font-family: Arial, sans-serif;
@@ -12,27 +11,24 @@ html, #root {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Schimbat de la 'center' la 'flex-start' */
-  padding: 1rem 2rem; /* Redus padding-ul de sus */
+  justify-content: flex-start;
+  padding: 0 2rem;
   text-align: center;
+  margin-top: -100px;
 }
 
 /* Buton Login */
 .login-button {
-  position: absolute;
-  top: -180px;
-  left: 1.5rem;
-  margin-left: -180px;
-
-  background-color: #d2cc0e; /* auriu */
-              /* text negru */
-
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background-color: #d2cc0e;
   padding: 10px 18px;
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
   transition: background-color 0.3s ease;
+  z-index: 1000;
 }
-
 
 .login-button a {
   color: #000000;
@@ -41,26 +37,27 @@ html, #root {
 }
 
 .login-button:hover {
-  background-color: #333;
+  background-color: #b9b300;
 }
 
 /* Logo */
 .logo-container {
-  margin-bottom: 1rem; /* Redus de la 2rem */
+  margin-bottom: 1rem;
 }
 
 .logo {
   width: 180px;
   height: auto;
 }
+
 .games-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem; /* Redus de la 2rem */
+  gap: 1.5rem;
   justify-content: center;
   width: 100%;
   max-width: 1200px;
-  padding: 0.5rem; /* Redus de la 1rem */
+  padding: 0.5rem;
 }
 
 .game-box {
@@ -90,3 +87,14 @@ html, #root {
   object-fit: contain;
   margin-bottom: 1rem;
 }
+
+.home-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.home-container p {
+  font-size: 1.2rem;
+  color: #34495e;
+} 

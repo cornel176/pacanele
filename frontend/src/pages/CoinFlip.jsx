@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import cbackground from "../assets/images/cbackground.png";
-import "../style/coinflip.css";
+import "../styles/coinflip.css";
 
-export default function CoinFlip({ balance, setBalance }) {
+export default function CoinFlip() {
   const [result, setResult] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [betAmount, setBetAmount] = useState(10);
   const [userChoice, setUserChoice] = useState(null);
   const [history, setHistory] = useState([]);
+  const [balance, setBalance] = useState(1000);
   const coinRef = useRef(null);
   const navigate = useNavigate();
 
@@ -159,4 +160,4 @@ export default function CoinFlip({ balance, setBalance }) {
       )}
     </div>
   );
-}
+} 
