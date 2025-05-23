@@ -54,13 +54,7 @@ export default function Auth() {
       <div className="auth-box">
         <div className="auth-content">
           <div className="auth-header">
-            <div className="auth-logo">
-              <svg viewBox="0 0 24 24" width="40" height="40">
-                <path fill="#4a90e2" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z"/>
-                <path fill="#4a90e2" d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6s6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4s4,1.79,4,4S14.21,16,12,16z"/>
-              </svg>
-              <span>STRYM</span>
-            </div>
+            
             <h1>{isLogin ? 'Bine ai revenit!' : 'Creează cont'}</h1>
             <p className="auth-subtitle">
               {isLogin 

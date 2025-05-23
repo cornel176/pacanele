@@ -189,7 +189,7 @@ def register():
         try:
             cursor.execute("""
                 INSERT INTO users (username, email, password_hash, balance, is_admin)
-                VALUES (%s, %s, %s, 0.00, %s)
+                VALUES (%s, %s, %s, 1000.00, %s)
             """, (data['username'], data['email'], hashed_password, is_admin))
             
             conn.commit()
@@ -201,7 +201,7 @@ def register():
                     'id': user_id,
                     'username': data['username'],
                     'email': data['email'],
-                    'balance': 0.00,
+                    'balance': 1000.00,
                     'is_admin': is_admin
                 }
             }), 201
@@ -252,6 +252,136 @@ def get_current_user():
         }), 200
     
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@auth_bp.route('/api/admin/users/<int:user_id>/toggle-admin', methods=['POST'])
+@login_required
+@admin_required
+def toggle_admin_status(user_id):
+    conn = get_connection()
+    if not conn:
+        return jsonify({'error': 'Eroare la conectarea la baza de date'}), 500
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        
+        # Check if user exists
+        cursor.execute("SELECT id, email, is_admin FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({'error': 'Utilizatorul nu a fost găsit!'}), 404
+        
+        # Prevent toggling the main admin
+        if user['email'] == ADMIN_EMAIL:
+            return jsonify({'error': 'Nu puteți modifica statusul administratorului principal!'}), 403
+        
+        # Toggle admin status
+        new_status = not user['is_admin']
+        cursor.execute("UPDATE users SET is_admin = %s WHERE id = %s", (new_status, user_id))
+        conn.commit()
+        
+        return jsonify({
+            'message': f'Status administrator actualizat cu succes!',
+            'is_admin': new_status
+        }), 200
+    
+    except Exception as e:
+        print("Toggle admin error:", str(e))  # Debug log
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@auth_bp.route('/api/update-balance', methods=['POST'])
+@login_required
+def update_balance():
+    data = request.get_json()
+    amount = data.get('amount')
+    
+    if amount is None:
+        return jsonify({'error': 'Amount is required'}), 400
+    
+    conn = get_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection error'}), 500
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get current balance
+        cursor.execute("SELECT balance FROM users WHERE id = %s", (session['user_id'],))
+        current_balance = cursor.fetchone()['balance']
+        
+        # Calculate new balance
+        new_balance = current_balance + amount
+        
+        # Update balance
+        cursor.execute("UPDATE users SET balance = %s WHERE id = %s", (new_balance, session['user_id']))
+        conn.commit()
+        
+        return jsonify({
+            'message': 'Balance updated successfully',
+            'newBalance': float(new_balance)
+        }), 200
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@auth_bp.route('/api/admin/users/<int:user_id>/update-balance', methods=['POST'])
+@login_required
+@admin_required
+def admin_update_balance(user_id):
+    data = request.get_json()
+    balance = data.get('balance')
+    
+    if balance is None:
+        return jsonify({'error': 'Balance is required'}), 400
+    
+    try:
+        balance = float(balance)
+        if balance < 0:
+            return jsonify({'error': 'Balance cannot be negative'}), 400
+    except ValueError:
+        return jsonify({'error': 'Invalid balance value'}), 400
+    
+    conn = get_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection error'}), 500
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        
+        # Check if user exists
+        cursor.execute("SELECT id, email FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Prevent modifying the main admin's balance
+        if user['email'] == ADMIN_EMAIL:
+            return jsonify({'error': 'Cannot modify main admin balance'}), 403
+        
+        # Update balance
+        cursor.execute("UPDATE users SET balance = %s WHERE id = %s", (balance, user_id))
+        conn.commit()
+        
+        return jsonify({
+            'message': 'Balance updated successfully',
+            'newBalance': float(balance)
+        }), 200
+        
+    except Exception as e:
+        conn.rollback()
         return jsonify({'error': str(e)}), 500
     finally:
         cursor.close()

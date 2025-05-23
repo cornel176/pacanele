@@ -1,114 +1,230 @@
 .admin-container {
+  padding: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  color: white;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background-color: #000;
-  color: #fff;
 }
 
 .admin-panel {
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 12px;
-  padding: 2rem;
-  width: 100%;
   max-width: 1200px;
-  margin-top: 2rem;
-  border: 1px solid #ffcc00;
-  box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+  margin: 0 auto;
+  padding: 10px;
+  position: relative;
+  top: 0;
 }
 
-.admin-panel h1 {
-  text-align: center;
-  color: #ffcc00;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.users-table {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  background: rgba(0, 0, 0, 0.5);
-}
-
-th, td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #ffcc00;
-}
-
-th {
-  background-color: rgba(255, 204, 0, 0.1);
-  color: #ffcc00;
+.refresh-button {
+  padding: 8px 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
   font-weight: bold;
 }
 
-tr:hover {
-  background-color: rgba(255, 204, 0, 0.05);
+.refresh-button:hover {
+  background: #388e3c;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.user-card {
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.user-header h3 {
+  margin: 0;
+  color: #fff;
+}
+
+.admin-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  background: #666;
+  color: white;
+}
+
+.admin-badge.is-admin {
+  background: #4caf50;
+}
+
+.user-details {
+  margin-bottom: 15px;
+}
+
+.user-details p {
+  margin: 5px 0;
+  color: #ccc;
+}
+
+.balance-section {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.balance-section p {
+  color: #4caf50 !important;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.balance-edit {
+  margin-top: 10px;
+}
+
+.balance-edit input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  background: #333;
+  color: white;
+}
+
+.balance-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.balance-actions button {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.balance-actions button:first-child {
+  background: #4caf50;
+  color: white;
+}
+
+.balance-actions button:last-child {
+  background: #666;
+  color: white;
+}
+
+.edit-balance-button {
+  width: 100%;
+  padding: 8px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.edit-balance-button:hover {
+  background: #388e3c;
+}
+
+.edit-balance-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.toggle-admin-button,
+.delete-button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.toggle-admin-button {
+  background: #2196f3;
+  color: white;
+}
+
+.toggle-admin-button.is-admin {
+  background: #f44336;
+}
+
+.delete-button {
+  background: #f44336;
+  color: white;
+}
+
+.toggle-admin-button:disabled,
+.delete-button:disabled {
+  background: #666;
+  cursor: not-allowed;
 }
 
 .error-message {
-  color: #ff4444;
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: rgba(255, 68, 68, 0.1);
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  padding: 10px;
   border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(244, 67, 54, 0.3);
 }
 
 .success-message {
-  color: #00ff00;
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: rgba(0, 255, 0, 0.1);
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  padding: 10px;
   border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .btn-home {
   position: fixed;
-  top: 15px;
-  left: 15px;
-  background-color: #ffcc00;
-  color: #000;
-  padding: 10px 20px;
+  top: 20px;
+  left: 20px;
+  padding: 8px 16px;
+  background: #4caf50;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 .btn-home:hover {
-  background-color: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
-}
-
-.delete-button {
-  background-color: #ff4444;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.delete-button:hover:not(:disabled) {
-  background-color: #ff0000;
-  transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-}
-
-.delete-button:disabled {
-  background-color: #666;
-  cursor: not-allowed;
-  opacity: 0.5;
+  background: #388e3c;
 } 

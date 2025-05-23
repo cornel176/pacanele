@@ -43,7 +43,7 @@ html, #root {
 /* Admin Button */
 .admin-button {
   position: fixed;
-  top: 15px;
+  top: 100px;
   right: 15px;
   background-color: #ffcc00;
   padding: 10px 18px;

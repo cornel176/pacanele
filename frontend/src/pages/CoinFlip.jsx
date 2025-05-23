@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBalance } from "../context/BalanceContext";
 import cbackground from "../assets/images/cbackground.png";
 import "../styles/coinflip.css";
 
@@ -9,7 +10,7 @@ export default function CoinFlip() {
   const [betAmount, setBetAmount] = useState(10);
   const [userChoice, setUserChoice] = useState(null);
   const [history, setHistory] = useState([]);
-  const [balance, setBalance] = useState(1000);
+  const { balance, updateBalance } = useBalance();
   const coinRef = useRef(null);
   const navigate = useNavigate();
 
@@ -27,12 +28,18 @@ export default function CoinFlip() {
     };
   }, []);
 
-  const flipCoin = () => {
+  const flipCoin = async () => {
     if (isFlipping || balance < betAmount || !userChoice) return;
 
     setIsFlipping(true);
     setResult(null);
-    setBalance(prev => prev - betAmount);
+
+    try {
+      await updateBalance(-betAmount);
+    } catch (error) {
+      setIsFlipping(false);
+      return;
+    }
 
     if (coinRef.current) {
       coinRef.current.classList.remove("flip-animation-heads", "flip-animation-tails");
@@ -48,13 +55,17 @@ export default function CoinFlip() {
         );
       }
 
-      setTimeout(() => {
+      setTimeout(async () => {
         if (randomResult === userChoice) {
           const winAmount = betAmount * 1.8;
-          setBalance(prev => prev + winAmount);
-          setHistory(prev =>
-            [...prev, { bet: betAmount, result: "win", amount: winAmount }].slice(-5)
-          );
+          try {
+            await updateBalance(winAmount);
+            setHistory(prev =>
+              [...prev, { bet: betAmount, result: "win", amount: winAmount }].slice(-5)
+            );
+          } catch (error) {
+            console.error("Error updating balance:", error);
+          }
         } else {
           setHistory(prev =>
             [...prev, { bet: betAmount, result: "lose", amount: 0 }].slice(-5)

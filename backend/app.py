@@ -7,6 +7,10 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
+# Session configuration
+app.secret_key = os.urandom(24)  # Generates a random secret key
+app.permanent_session_lifetime = timedelta(days=7)  # Sessions will last for 7 days
+
 # CORS configuration
 CORS(app, resources={
     r"/api/*": {
@@ -17,11 +21,7 @@ CORS(app, resources={
         "expose_headers": ["Content-Type", "Authorization"],
         "max_age": 3600
     }
-})
-
-# Session configuration
-app.secret_key = os.urandom(24)  # Generates a random secret key
-app.permanent_session_lifetime = timedelta(days=7)  # Sessions will last for 7 days
+}, supports_credentials=True)
 
 # Register blueprints
 app.register_blueprint(auth_bp)

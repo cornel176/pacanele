@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBalance } from "../context/BalanceContext";
 import "../styles/SlotMachine.css";
 
 import cherry from "../assets/images/slot-symbols/cherry.png";
@@ -25,8 +26,9 @@ const checkWin = (grid) => {
   return lines.some(line => line.every(i => grid[i] === grid[line[0]]));
 };
 
-const SlotMachine = ({ balance, setBalance }) => {
+const SlotMachine = () => {
   const navigate = useNavigate();
+  const { balance, updateBalance } = useBalance();
 
   const [grid, setGrid] = useState(Array(9).fill(null).map(() => getRandomSymbol()));
   const [isSpinning, setIsSpinning] = useState(false);
@@ -35,7 +37,7 @@ const SlotMachine = ({ balance, setBalance }) => {
   const [message, setMessage] = useState("");
   const [betAmount, setBetAmount] = useState("");
 
-  const spin = () => {
+  const spin = async () => {
     if (isSpinning) return;
 
     const bet = parseInt(betAmount, 10);
@@ -52,7 +54,15 @@ const SlotMachine = ({ balance, setBalance }) => {
     setIsSpinning(true);
     setWin(false);
     setLeverPulled(true);
-    setBalance(prev => prev - bet);
+    
+    try {
+      await updateBalance(-bet);
+    } catch (error) {
+      setMessage("Eroare la actualizarea balanței!");
+      setIsSpinning(false);
+      setLeverPulled(false);
+      return;
+    }
 
     const spinDuration = 2500;
     const startTime = Date.now();
@@ -76,8 +86,11 @@ const SlotMachine = ({ balance, setBalance }) => {
 
         if (didWin) {
           const reward = bet * WIN_REWARD_MULTIPLIER;
-          setBalance(prev => prev + reward);
-          setMessage(`YOU WIN! Ai câștigat ${reward} lei!`);
+          updateBalance(reward).then(() => {
+            setMessage(`YOU WIN! Ai câștigat ${reward} lei!`);
+          }).catch(() => {
+            setMessage("Eroare la actualizarea balanței!");
+          });
         } else {
           setMessage("Mai încearcă!");
         }

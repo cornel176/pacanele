@@ -16,6 +16,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Configure axios defaults
+  axios.defaults.withCredentials = true;
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -28,6 +31,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       setIsAuthenticated(true);
     } catch (error) {
+      console.error('Auth check error:', error);
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return response.data;
     } catch (error) {
+      console.error('Login error:', error);
       throw error.response?.data || { error: 'A apărut o eroare la autentificare' };
     }
   };
@@ -61,6 +66,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       return response.data;
     } catch (error) {
+      console.error('Register error:', error);
       throw error.response?.data || { error: 'A apărut o eroare la înregistrare' };
     }
   };

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useBalance } from "../context/BalanceContext";
 import "../styles/diceroll.css";
 
-const DiceRoll = ({ balance, setBalance }) => {
+const DiceRoll = () => {
   const [isRolling, setIsRolling] = useState(false);
   const [diceValue, setDiceValue] = useState(null);
   const [guess, setGuess] = useState("");
   const [wager, setWager] = useState("");
   const [resultMsg, setResultMsg] = useState("");
+  const { balance, updateBalance } = useBalance();
 
   const perFace = [
     [-0.1, 0.3, -1], // Face 1
@@ -36,7 +38,7 @@ const DiceRoll = ({ balance, setBalance }) => {
       />
     ));
 
-  const rollDice = () => {
+  const rollDice = async () => {
     if (isRolling) return;
 
     const bet = parseFloat(wager);
@@ -59,6 +61,14 @@ const DiceRoll = ({ balance, setBalance }) => {
     setDiceValue(null);
     setResultMsg("");
 
+    try {
+      await updateBalance(-bet);
+    } catch (error) {
+      setResultMsg("Eroare la actualizarea balanței!");
+      setIsRolling(false);
+      return;
+    }
+
     const diceElement = document.querySelector(".dice");
     diceElement.classList.add("rolling");
 
@@ -76,10 +86,12 @@ const DiceRoll = ({ balance, setBalance }) => {
 
       if (face + 1 === guessNum) {
         const won = bet * 4;
-        setBalance((prev) => prev + won);
-        setResultMsg(`Ai ghicit! Ai câștigat $${won.toFixed(2)}!`);
+        updateBalance(won).then(() => {
+          setResultMsg(`Ai ghicit! Ai câștigat $${won.toFixed(2)}!`);
+        }).catch(() => {
+          setResultMsg("Eroare la actualizarea balanței!");
+        });
       } else {
-        setBalance((prev) => prev - bet);
         setResultMsg(`Ai pierdut $${bet.toFixed(2)}. Mai încearcă!`);
       }
 

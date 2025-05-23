@@ -1,52 +1,61 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
+import { BalanceProvider } from './context/BalanceContext';
 import Auth from './pages/Auth';
 import Home from './pages/Home';
 import CoinFlip from './pages/CoinFlip';
 import DiceRoll from './pages/DiceRoll';
 import SlotMachine from './pages/SlotMachine';
 import Admin from './pages/Admin';
-import { useState } from 'react';
+import BalanceDisplay from './components/BalanceDisplay';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticated ? (
+    <>
+      <BalanceDisplay />
+      {children}
+    </>
+  ) : <Navigate to="/login" />;
 };
 
 // Admin Route component
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuth();
-  return isAuthenticated && user?.is_admin ? children : <Navigate to="/" />;
+  return isAuthenticated && user?.is_admin ? (
+    <>
+      <BalanceDisplay />
+      {children}
+    </>
+  ) : <Navigate to="/" />;
 };
 
 function App() {
-  const [balance, setBalance] = useState(1000);
-
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <BalanceProvider>
         <Routes>
           <Route path="/login" element={<Auth />} />
           <Route path="/register" element={<Auth />} />
           <Route path="/" element={
             <ProtectedRoute>
-              <Home balance={balance} setBalance={setBalance} />
+              <Home />
             </ProtectedRoute>
           } />
           <Route path="/slot" element={
             <ProtectedRoute>
-              <SlotMachine balance={balance} setBalance={setBalance} />
+              <SlotMachine />
             </ProtectedRoute>
           } />
           <Route path="/dice" element={
             <ProtectedRoute>
-              <DiceRoll balance={balance} setBalance={setBalance} />
+              <DiceRoll />
             </ProtectedRoute>
           } />
           <Route path="/coin" element={
             <ProtectedRoute>
-              <CoinFlip balance={balance} setBalance={setBalance} />
+              <CoinFlip />
             </ProtectedRoute>
           } />
           <Route path="/admin" element={
@@ -55,8 +64,8 @@ function App() {
             </AdminRoute>
           } />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      </BalanceProvider>
+    </BrowserRouter>
   );
 }
 
