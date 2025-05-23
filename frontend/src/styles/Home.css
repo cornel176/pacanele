@@ -40,6 +40,31 @@ html, #root {
   background-color: #b9b300;
 }
 
+/* Admin Button */
+.admin-button {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background-color: #ffcc00;
+  padding: 10px 18px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.admin-button a {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-button:hover {
+  background-color: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
 /* Logo */
 .logo-container {
   margin-bottom: 1rem;

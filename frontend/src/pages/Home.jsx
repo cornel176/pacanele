@@ -33,6 +33,13 @@ export default function Home({ balance, setBalance }) {
         )}
       </div>
 
+      {/* Admin Button */}
+      {isAuthenticated && user?.is_admin && (
+        <div className="admin-button">
+          <Link to="/admin">Admin Panel</Link>
+        </div>
+      )}
+
       {/* Logo */}
       <div className="logo-container">
         <img src={Logo} alt="Casino Logo" className="logo" />

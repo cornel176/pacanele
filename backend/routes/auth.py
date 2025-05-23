@@ -7,6 +7,9 @@ from datetime import datetime, timedelta
 
 auth_bp = Blueprint('auth', __name__)
 
+# Admin email configuration
+ADMIN_EMAIL = "admin@example.com"  # Change this to your desired admin email
+
 def cleanup_expired_sessions():
     """Curăță sesiunile expirate din directorul flask_session"""
     session_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'flask_session')
@@ -37,6 +40,75 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session or not session.get('is_admin'):
+            return jsonify({'error': 'Acces interzis. Necesită drepturi de administrator.'}), 403
+        
+        session.permanent = True
+        session.modified = True
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+@auth_bp.route('/api/admin', methods=['GET'])
+@login_required
+@admin_required
+def admin_panel():
+    conn = get_connection()
+    if not conn:
+        return jsonify({'error': 'Eroare la conectarea la baza de date'}), 500
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, username, email, balance, is_admin FROM users")
+        users = cursor.fetchall()
+        
+        return jsonify({
+            'message': 'Acces la panoul de administrare reușit!',
+            'users': users
+        }), 200
+    
+    except Exception as e:
+        print("Admin panel error:", str(e))  # Debug log
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@auth_bp.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+@login_required
+@admin_required
+def delete_user(user_id):
+    conn = get_connection()
+    if not conn:
+        return jsonify({'error': 'Eroare la conectarea la baza de date'}), 500
+    
+    try:
+        cursor = conn.cursor(dictionary=True)
+        
+        # Check if user exists
+        cursor.execute("SELECT id FROM users WHERE id = %s", (user_id,))
+        if not cursor.fetchone():
+            return jsonify({'error': 'Utilizatorul nu a fost găsit!'}), 404
+        
+        # Delete user
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        
+        return jsonify({
+            'message': 'Utilizator șters cu succes!'
+        }), 200
+    
+    except Exception as e:
+        print("Delete user error:", str(e))  # Debug log
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 @auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -53,6 +125,15 @@ def login():
         user = cursor.fetchone()
         
         if user and check_password_hash(user['password_hash'], password):
+            # Check if user is admin
+            is_admin = email == ADMIN_EMAIL
+            
+            # Update admin status in database if needed
+            if is_admin and not user['is_admin']:
+                cursor.execute("UPDATE users SET is_admin = TRUE WHERE email = %s", (email,))
+                conn.commit()
+                user['is_admin'] = True
+            
             session.permanent = True
             session['user_id'] = user['id']
             session['is_admin'] = user['is_admin']
@@ -100,13 +181,16 @@ def register():
         if cursor.fetchone():
             return jsonify({'error': 'Un utilizator cu acest email există deja!'}), 400
         
+        # Check if user is admin
+        is_admin = data['email'] == ADMIN_EMAIL
+        
         # Creează utilizatorul nou
         hashed_password = generate_password_hash(data['password'])
         try:
             cursor.execute("""
                 INSERT INTO users (username, email, password_hash, balance, is_admin)
-                VALUES (%s, %s, %s, 0.00, FALSE)
-            """, (data['username'], data['email'], hashed_password))
+                VALUES (%s, %s, %s, 0.00, %s)
+            """, (data['username'], data['email'], hashed_password, is_admin))
             
             conn.commit()
             user_id = cursor.lastrowid
@@ -118,7 +202,7 @@ def register():
                     'username': data['username'],
                     'email': data['email'],
                     'balance': 0.00,
-                    'is_admin': False
+                    'is_admin': is_admin
                 }
             }), 201
         except Exception as db_error:

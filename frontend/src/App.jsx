@@ -5,12 +5,19 @@ import Home from './pages/Home';
 import CoinFlip from './pages/CoinFlip';
 import DiceRoll from './pages/DiceRoll';
 import SlotMachine from './pages/SlotMachine';
+import Admin from './pages/Admin';
 import { useState } from 'react';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+// Admin Route component
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuth();
+  return isAuthenticated && user?.is_admin ? children : <Navigate to="/" />;
 };
 
 function App() {
@@ -41,6 +48,11 @@ function App() {
             <ProtectedRoute>
               <CoinFlip balance={balance} setBalance={setBalance} />
             </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
           } />
         </Routes>
       </BrowserRouter>
